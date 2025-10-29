@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <title>API Test</title>
+</head>
+<body>
+  <h1>API Test</h1>
+  <button onclick="testAPI()">Test API</button>
+  <pre id="result"></pre>
+
+  <script>
+    async function testAPI() {
+      const result = document.getElementById('result');
+      try {
+        const response = await fetch('/api/tasks');
+        const tasks = await response.json();
+        result.textContent = JSON.stringify(tasks, null, 2);
+        console.log('Tasks:', tasks);
+        console.log('Task types:', tasks.map(t => ({
+          id: typeof t.id,
+          done: typeof t.done,
+          doneValue: t.done
+        })));
+      } catch (error) {
+        result.textContent = 'Error: ' + error.message;
+        console.error('Error:', error);
+      }
+    }
+
+    // Auto-run on load
+    window.addEventListener('DOMContentLoaded', testAPI);
+  </script>
+</body>
+</html>

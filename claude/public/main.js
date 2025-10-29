@@ -24,6 +24,9 @@ let isSubmitting = false;
 
 // Initialize
 document.addEventListener('DOMContentLoaded', () => {
+  console.log('[DEBUG] DOMContentLoaded - Initializing app');
+  console.log('[DEBUG] taskList element:', taskList);
+  console.log('[DEBUG] emptyState element:', emptyState);
   loadTasks();
   taskForm.addEventListener('submit', handleCreateTask);
   showOnlyIncomplete.addEventListener('change', loadTasks);
@@ -34,11 +37,14 @@ document.addEventListener('DOMContentLoaded', () => {
 
 // Load tasks
 async function loadTasks() {
+  console.log('[DEBUG] loadTasks called');
   try {
     let url = `${API_BASE}/tasks`;
     if (showOnlyIncomplete.checked) {
       url += '?done=false';
+      console.log('[DEBUG] Filter: showing incomplete only');
     }
+    console.log('[DEBUG] Fetching from:', url);
 
     const response = await fetch(url, {
       headers: { 'Cache-Control': 'no-store' }
@@ -49,33 +55,41 @@ async function loadTasks() {
     }
 
     const tasks = await response.json();
+    console.log('[DEBUG] Received tasks:', tasks);
+    console.log('[DEBUG] Number of tasks:', tasks.length);
     renderTasks(tasks);
   } catch (error) {
-    console.error('Error loading tasks:', error);
+    console.error('[DEBUG] Error loading tasks:', error);
   }
 }
 
 // Render tasks
 function renderTasks(tasks) {
+  console.log('[DEBUG] renderTasks called with', tasks.length, 'tasks');
   taskList.innerHTML = '';
 
   if (tasks.length === 0) {
+    console.log('[DEBUG] No tasks, showing empty state');
     emptyState.style.display = 'block';
     return;
   }
 
+  console.log('[DEBUG] Hiding empty state, rendering tasks');
   emptyState.style.display = 'none';
 
-  tasks.forEach(task => {
+  tasks.forEach((task, index) => {
+    console.log(`[DEBUG] Creating element for task ${index + 1}:`, task);
     const taskElement = createTaskElement(task);
     taskList.appendChild(taskElement);
   });
+  console.log('[DEBUG] All tasks rendered. taskList children count:', taskList.children.length);
 }
 
 // Create task element
 function createTaskElement(task) {
   const li = document.createElement('li');
   li.className = 'task-item';
+  li.dataset.taskId = task.id;
   if (task.done) {
     li.classList.add('completed');
   }
@@ -84,7 +98,7 @@ function createTaskElement(task) {
   checkbox.type = 'checkbox';
   checkbox.checked = task.done;
   checkbox.className = 'task-checkbox';
-  checkbox.aria-label = `${task.title}を${task.done ? '未完了' : '完了'}にする`;
+  checkbox.setAttribute('aria-label', `${task.title}を${task.done ? '未完了' : '完了'}にする`);
   checkbox.addEventListener('change', () => handleToggleTask(task.id, checkbox.checked, checkbox));
 
   const taskContent = document.createElement('div');
@@ -121,13 +135,13 @@ function createTaskElement(task) {
   const editBtn = document.createElement('button');
   editBtn.textContent = '編集';
   editBtn.className = 'task-btn edit-btn';
-  editBtn.aria-label = `${task.title}を編集`;
+  editBtn.setAttribute('aria-label', `${task.title}を編集`);
   editBtn.addEventListener('click', () => openEditModal(task));
 
   const deleteBtn = document.createElement('button');
   deleteBtn.textContent = '削除';
   deleteBtn.className = 'task-btn delete-btn';
-  deleteBtn.aria-label = `${task.title}を削除`;
+  deleteBtn.setAttribute('aria-label', `${task.title}を削除`);
   deleteBtn.addEventListener('click', () => handleDeleteTask(task.id, task.title));
 
   actions.appendChild(editBtn);
@@ -194,25 +208,15 @@ async function handleCreateTask(e) {
       return;
     }
 
-    // Add new task to the beginning of the list
-    const tasks = [];
-    const existingTasks = taskList.querySelectorAll('.task-item');
-    if (existingTasks.length === 0 || emptyState.style.display === 'block') {
-      emptyState.style.display = 'none';
-      tasks.push(data);
-    } else {
-      tasks.push(data);
-      existingTasks.forEach(item => {
-        const title = item.querySelector('.task-title').textContent;
-        const desc = item.querySelector('.task-description')?.textContent || '';
-        const dueDate = item.querySelector('.task-due-date')?.textContent || '';
-        tasks.push({ title, description: desc, dueDate });
-      });
-    }
-
-    taskList.innerHTML = '';
+    console.log('[DEBUG] Task created successfully:', data);
+    // Add new task to the beginning of the list (immediate reflection)
     const newElement = createTaskElement(data);
+    if (taskList.children.length === 0) {
+      console.log('[DEBUG] List was empty, hiding empty state');
+      emptyState.style.display = 'none';
+    }
     taskList.insertBefore(newElement, taskList.firstChild);
+    console.log('[DEBUG] New task added to DOM. taskList children count:', taskList.children.length);
 
     // Clear form
     taskForm.reset();
@@ -306,6 +310,9 @@ function openEditModal(task) {
   document.getElementById('editDueDateInput').value = task.dueDate || '';
   editModal.style.display = 'block';
   document.getElementById('editTitleInput').focus();
+
+  // Store reference to the task element
+  editModal.dataset.taskId = task.id;
 }
 
 // Close edit modal
@@ -329,13 +336,9 @@ async function handleEditTask(e) {
 
   const updates = {};
   if (title) updates.title = title;
-  if (description !== '') updates.description = description;
+  // Allow empty string for description (to clear it)
+  updates.description = description;
   if (dueDate !== '') updates.dueDate = dueDate;
-
-  if (Object.keys(updates).length === 0) {
-    showEditError('少なくとも一つのフィールドを変更してください');
-    return;
-  }
 
   try {
     const response = await fetch(`${API_BASE}/tasks/${currentEditingTaskId}`, {
@@ -351,9 +354,15 @@ async function handleEditTask(e) {
       return;
     }
 
-    // Reload tasks
+    // Update DOM directly without reloading
+    const targetItem = taskList.querySelector(`[data-task-id="${currentEditingTaskId}"]`);
+
+    if (targetItem) {
+      const newElement = createTaskElement(data);
+      targetItem.replaceWith(newElement);
+    }
+
     closeEditModal();
-    loadTasks();
 
   } catch (error) {
     console.error('Error updating task:', error);

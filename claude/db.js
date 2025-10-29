@@ -18,6 +18,8 @@ function initDb() {
         return;
       }
 
+      console.log(`[DB] Connected to database: ${DB_FILE}`);
+
       if (isNewDb) {
         const schema = fs.readFileSync(SCHEMA_FILE, 'utf-8');
         db.exec(schema, (err) => {
@@ -30,6 +32,7 @@ function initDb() {
           resolve();
         });
       } else {
+        console.log('[DB] Using existing database');
         resolve();
       }
     });
@@ -49,7 +52,12 @@ function toCamelCase(obj) {
   const result = {};
   for (const key in obj) {
     const camelKey = key.replace(/_([a-z])/g, (g) => g[1].toUpperCase());
-    result[camelKey] = obj[key];
+    // Convert done from INTEGER (0/1) to boolean
+    if (key === 'done') {
+      result[camelKey] = obj[key] === 1;
+    } else {
+      result[camelKey] = obj[key];
+    }
   }
   return result;
 }
