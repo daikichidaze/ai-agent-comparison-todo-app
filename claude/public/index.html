@@ -1,0 +1,120 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>シンプルTodo管理アプリ</title>
+  <link rel="stylesheet" href="/styles.css">
+</head>
+<body>
+  <div class="container">
+    <header class="header">
+      <h1>シンプルTodo管理アプリ</h1>
+    </header>
+
+    <main class="main">
+      <!-- Task creation form -->
+      <section class="create-section">
+        <h2>新しいタスクを作成</h2>
+        <form id="taskForm" class="task-form">
+          <div class="form-group">
+            <label for="titleInput">タイトル <span class="required">*</span></label>
+            <input
+              type="text"
+              id="titleInput"
+              placeholder="タスクのタイトルを入力"
+              required
+              aria-label="タスクのタイトル"
+            >
+            <div class="error-message" id="titleError"></div>
+          </div>
+
+          <div class="form-group">
+            <label for="descriptionInput">説明</label>
+            <textarea
+              id="descriptionInput"
+              placeholder="タスクの説明（オプション）"
+              rows="3"
+              aria-label="タスクの説明"
+            ></textarea>
+            <div class="error-message" id="descriptionError"></div>
+          </div>
+
+          <div class="form-group">
+            <label for="dueDateInput">期限</label>
+            <input
+              type="date"
+              id="dueDateInput"
+              aria-label="タスクの期限"
+            >
+            <div class="error-message" id="dueDateError"></div>
+          </div>
+
+          <div class="form-actions">
+            <button type="submit" id="submitBtn" aria-label="タスクを作成">タスクを作成</button>
+            <div id="formError" class="error-message"></div>
+          </div>
+        </form>
+      </section>
+
+      <!-- Filter and controls -->
+      <section class="filter-section">
+        <div class="filter-controls">
+          <label>
+            <input
+              type="checkbox"
+              id="showOnlyIncomplete"
+              aria-label="未完了のみ表示"
+            >
+            未完了のみ表示
+          </label>
+          <button id="refreshBtn" class="secondary-btn" aria-label="更新">更新</button>
+        </div>
+      </section>
+
+      <!-- Task list -->
+      <section class="tasks-section">
+        <h2>タスク一覧</h2>
+        <div id="taskList" class="task-list"></div>
+        <div id="emptyState" class="empty-state">
+          タスクはまだありません
+        </div>
+      </section>
+    </main>
+  </div>
+
+  <!-- Edit modal (using prompt, but keeping structure for potential enhancement) -->
+  <div id="editModal" class="modal" style="display: none;">
+    <div class="modal-content">
+      <h3>タスクを編集</h3>
+      <form id="editForm" class="task-form">
+        <div class="form-group">
+          <label for="editTitleInput">タイトル</label>
+          <input type="text" id="editTitleInput" placeholder="タイトル">
+          <div class="error-message" id="editTitleError"></div>
+        </div>
+
+        <div class="form-group">
+          <label for="editDescriptionInput">説明</label>
+          <textarea id="editDescriptionInput" rows="3" placeholder="説明"></textarea>
+          <div class="error-message" id="editDescriptionError"></div>
+        </div>
+
+        <div class="form-group">
+          <label for="editDueDateInput">期限</label>
+          <input type="date" id="editDueDateInput">
+          <div class="error-message" id="editDueDateError"></div>
+        </div>
+
+        <div class="form-actions">
+          <button type="submit" class="primary-btn">保存</button>
+          <button type="button" class="secondary-btn" id="cancelEditBtn">キャンセル</button>
+          <div id="editError" class="error-message"></div>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <script src="/main.js"></script>
+</body>
+</html>
