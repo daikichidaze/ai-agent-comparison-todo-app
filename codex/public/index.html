@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html lang="ja">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>シンプルTodo管理アプリ</title>
+    <link rel="stylesheet" href="/styles.css" />
+  </head>
+  <body>
+    <header class="page-header">
+      <h1>シンプルTodo</h1>
+    </header>
+    <main class="page-main">
+      <section class="panel">
+        <h2>タスクの追加</h2>
+        <form id="task-form" novalidate>
+          <div class="form-field">
+            <label for="title-input">タイトル</label>
+            <input
+              id="title-input"
+              name="title"
+              type="text"
+              required
+              autocomplete="off"
+              placeholder="例：買い物に行く"
+            />
+          </div>
+          <div class="form-field">
+            <label for="description-input">説明</label>
+            <textarea
+              id="description-input"
+              name="description"
+              rows="3"
+              placeholder="例：牛乳と卵を買う"
+            ></textarea>
+          </div>
+          <div class="form-field">
+            <label for="due-date-input">期限</label>
+            <input id="due-date-input" name="dueDate" type="date" />
+          </div>
+          <div class="form-actions">
+            <button id="submit-button" type="submit">追加する</button>
+          </div>
+        </form>
+        <p id="form-error" class="form-error" aria-live="assertive"></p>
+      </section>
+
+      <section class="panel">
+        <h2>タスク一覧</h2>
+        <div class="list-controls">
+          <label class="filter-toggle">
+            <input id="filter-undone" type="checkbox" />
+            未完了のみ表示
+          </label>
+          <button
+            id="refresh-button"
+            type="button"
+            aria-label="タスク一覧を再読み込み"
+          >
+            再読み込み
+          </button>
+        </div>
+        <div id="loading-indicator" class="loading" hidden>読み込み中...</div>
+        <p id="list-error" class="list-error" aria-live="assertive"></p>
+        <p id="empty-state" class="empty-state" hidden>
+          タスクはまだありません。
+        </p>
+        <ul id="task-list" class="task-list"></ul>
+      </section>
+    </main>
+
+    <script src="/main.js" defer></script>
+  </body>
+</html>
