@@ -143,6 +143,9 @@
 - 画面は **単一ページ**（`/public/index.html` + `/public/main.js`）。    
 - **言語** 日本語
 - **タスク作成フォーム**（title 必須・エラーメッセージ表示）。
+	- タイトル
+	- 説明
+	- 期限
 - **一覧表示**（`createdAt DESC, id DESC`）。
 - **完了操作**：チェックボックス変更時に `PATCH /api/tasks/:id` へ `{ "done": true|false }` を送信（送信中は無効化）。
 - **編集**：簡易モーダル／`prompt` などで `PATCH`。
