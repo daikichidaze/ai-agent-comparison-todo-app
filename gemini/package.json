@@ -1,0 +1,15 @@
+{
+  "name": "mini-todo-app",
+  "version": "1.0.0",
+  "description": "A simple Todo management application based on the mini-todo-spec.",
+  "main": "server.js",
+  "scripts": {
+    "start": "node server.js"
+  },
+  "dependencies": {
+    "express": "^4.19.2",
+    "sqlite3": "^5.1.7"
+  },
+  "author": "",
+  "license": "ISC"
+}

@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>シンプルTodo管理</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+
+    <main class="container">
+        <h1>シンプルTodo管理</h1>
+
+        <div id="error-container" class="error-box" hidden></div>
+
+        <form id="task-form">
+            <div class="form-group">
+                <label for="title">タイトル</label>
+                <input type="text" id="title" name="title" placeholder="例：牛乳を買う" required maxlength="100">
+            </div>
+            <div class="form-group">
+                <label for="description">説明</label>
+                <textarea id="description" name="description" placeholder="詳細（任意）" maxlength="1000"></textarea>
+            </div>
+            <div class="form-group">
+                <label for="dueDate">期限</label>
+                <input type="date" id="dueDate" name="dueDate">
+            </div>
+            <button type="submit" id="add-task-btn">追加</button>
+        </form>
+
+        <div class="filter-container">
+            <label>
+                <input type="checkbox" id="filter-incomplete">
+                未完了のみ表示
+            </label>
+        </div>
+
+        <div id="loading-indicator" hidden>読み込み中...</div>
+
+        <ul id="task-list"></ul>
+
+        <p id="empty-state" hidden>タスクはありません。</p>
+
+    </main>
+
+    <div id="edit-modal" class="modal" hidden>
+        <div class="modal-content">
+            <h2>タスクを編集</h2>
+            <form id="edit-form">
+                <input type="hidden" id="edit-task-id">
+                <div class="form-group">
+                    <label for="edit-title">タイトル</label>
+                    <input type="text" id="edit-title" required maxlength="100">
+                </div>
+                <div class="form-group">
+                    <label for="edit-description">説明</label>
+                    <textarea id="edit-description" maxlength="1000"></textarea>
+                </div>
+                <div class="form-group">
+                    <label for="edit-dueDate">期限</label>
+                    <input type="date" id="edit-dueDate">
+                </div>
+                <div class="modal-actions">
+                    <button type="submit" id="save-edit-btn">保存</button>
+                    <button type="button" id="cancel-edit-btn">キャンセル</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <script src="main.js"></script>
+</body>
+</html>
